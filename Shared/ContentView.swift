@@ -7,6 +7,47 @@
 
 import SwiftUI
 
+/// hack from https://stackoverflow.com/a/68448681/38729
+struct OverlayWrapper<Content: View>: UIViewRepresentable {
+		
+		var content: Content
+		
+		init(@ViewBuilder content: @escaping () -> Content) {
+				self.content = content()
+		}
+		
+		func makeUIView(context: Context) -> UIView {
+				
+				let uiView = UIView()
+				
+				// Get reference to the SwiftUI view wrapped inside ScrollView
+				let child = UIHostingController(rootView: content)
+				
+				let screenWidth = UIScreen.main.bounds.width
+				let screenHeight = UIScreen.main.bounds.height
+				
+				// Get size of the child
+				let newSize = child.view.sizeThatFits(CGSize(width: screenWidth, height: screenHeight))
+				
+				let frame = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+				
+				child.view.frame = frame
+				child.view.backgroundColor = UIColor.clear
+
+				uiView.frame = frame
+				uiView.backgroundColor = UIColor.clear
+				
+				uiView.addSubview(child.view)
+				
+				return uiView
+		}
+		
+		
+		func updateUIView(_ uiView: UIView, context: Context) {
+				// If the UI is not updated, updateUIView will not be called
+		}
+}
+
 struct HorizontalView: View {
 	var body: some View {
 		ScrollView(.horizontal, showsIndicators: false) {
@@ -42,17 +83,18 @@ struct HorizontalView: View {
 
 struct ContentView: View {
 		var body: some View {
-			ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
-				
-				/// overlay that stays on top during scroll
-				/// this should not block the drag gestures for the underlying ScrollViews, but it absolutely does!
-				Rectangle()
-					.background(Color.red)
+			ZStack(alignment: .topTrailing) {
+
+				/// this seems to work
+				OverlayWrapper() {
+					Rectangle()
+						.background(Color.red)
+						.frame(width: 128, height: 192)
+						.opacity(0.25)
+				}
 					.frame(width: 128, height: 192)
-					.zIndex(1)
-					.opacity(0.25)
-					.allowsHitTesting(false)
 					.disabled(true)
+					.zIndex(1)
 				
 				ScrollView(.vertical) {
 					VStack {
@@ -91,9 +133,9 @@ struct ContentView: View {
 							Text("Line 21")
 						}
 					}
-				}
+				} /// scrollview
 				.zIndex(0)
-
+				
 			} /// zstack
 			.frame(width: 256, height: 256)
 			.background(Color.white)
