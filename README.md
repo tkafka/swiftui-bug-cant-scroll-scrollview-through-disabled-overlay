@@ -16,4 +16,6 @@ Everywhere I tried - iOS, WatchOS ...
 
 # Workaround
 
-See branch `hacky-workaround-01` with a hack from https://stackoverflow.com/a/68448681/38729
+See branch `hacky-workaround-01` with a hack from https://stackoverflow.com/a/68448681/38729.
+
+It works, but I have no idea about performance implications, and (main problem for me!) **it isn't applicable in WatchOS**.
