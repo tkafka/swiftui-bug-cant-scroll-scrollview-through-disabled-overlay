@@ -13,3 +13,7 @@ Everywhere I tried - iOS, WatchOS ...
 # Video:
 
 ![Image of problem](swiftui-scrollview-fail.gif)
+
+# Workaround
+
+See branch `hacky-workaround-01` with a hack from https://stackoverflow.com/a/68448681/38729
